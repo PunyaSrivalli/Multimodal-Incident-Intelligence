@@ -1,0 +1,21 @@
+2026-05-07T15:08:22.361Z  INFO   [auth-service.deploy]  deploy auth-service v2026.05.07 (image sha=4f70b1) -> 100% (changes: stricter email validation regex, fix #C-3318)
+2026-05-07T15:08:52.266Z  INFO   [auth-service]  [req-001] POST /login email=alex@example.com -> 200 in 92ms
+2026-05-07T15:09:52.496Z  INFO   [auth-service]  [req-002] POST /login email=test@example.com -> 200 in 88ms
+2026-05-07T15:10:47.537Z  WARN   [auth-service]  [req-018] POST /login email=longuserwithlots...@subdomain.example.co.uk -> 200 in 1842ms
+2026-05-07T15:11:22.028Z  WARN   [auth-service]  [req-024] POST /login email=user.name+filter.tag.label@mail.subdomain.partnerexample.co -> 200 in 3120ms
+2026-05-07T15:11:52.944Z  WARN   [auth-service.metrics]  process cpu_usage=0.94 (1m avg), thread pool busy=24/32
+2026-05-07T15:12:22.512Z  WARN   [auth-service]  [req-051] POST /login email=very.long.username.with.many.dots@some.long.subdomain.example.org -> 200 in 4980ms
+2026-05-07T15:12:52.046Z  ERROR  [edge-proxy]  [req-073] upstream auth-service exceeded 5000ms gateway timeout for POST /login -> 504
+2026-05-07T15:13:27.320Z  ERROR  [edge-proxy]  [req-088] upstream auth-service exceeded 5000ms gateway timeout for POST /login -> 504
+2026-05-07T15:14:22.762Z  WARN   [auth-service.metrics]  process cpu_usage=0.99 (1m avg), thread pool busy=32/32 (saturated)
+2026-05-07T15:15:12.030Z  INFO   [auth-service.profiler]  async-profiler sample (60s): 92% CPU in java.util.regex.Pattern$Curly.match() <- com.example.auth.EmailValidator.isValid(EmailValidator.java:41)
+2026-05-07T15:16:12.203Z  ERROR  [edge-proxy]  [req-114] upstream auth-service exceeded 5000ms gateway timeout for POST /login -> 504
+2026-05-07T15:17:22.907Z  INFO   [auth-service.profiler]  top hot method: java.util.regex.Pattern$Curly.match (catastrophic backtracking suspected on /login email field)
+2026-05-07T15:18:22.177Z  WARN   [auth-service]  [req-141] POST /login email=a.really.long.username.with.dots.and.dashes-here-and-there@sub.example.com -> 504 (timed-out by edge after 5s)
+2026-05-07T15:19:22.560Z  INFO   [auth-service.deploy]  candidate rollback target: auth-service v2026.05.06 (image sha=f120ab) — last green build, deployed 18h ago
+2026-05-07T15:20:22.925Z  WARN   [auth-service.metrics]  process cpu_usage=0.98, thread pool busy=32/32, latency_p95=4180ms
+2026-05-07T15:21:42.069Z  ERROR  [edge-proxy]  [req-178] upstream auth-service exceeded 5000ms gateway timeout for POST /login -> 504
+2026-05-07T15:23:02.011Z  WARN   [auth-service]  [req-202] POST /login email=corp.user+tag@subsidiary.parent-company.example.com -> 200 in 4760ms (slow)
+2026-05-07T15:24:22.492Z  INFO   [auth-service.metrics]  request_rate_rps=148 (down from baseline 165, clients giving up)
+2026-05-07T15:25:42.513Z  ERROR  [edge-proxy]  [req-241] upstream auth-service exceeded 5000ms gateway timeout for POST /login -> 504
+2026-05-07T15:27:22.562Z  WARN   [auth-service.metrics]  process cpu_usage=0.97, latency_p95=4240ms — sustained for 14 minutes

@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-2026-0005",
+  "ground_truth_version": "1.0",
+  "root_cause_hypothesis": "The host `orders-api-i-0a3c` is out of disk space because logrotate is not rotating /var/log/orders-api/app.log — the config audit log @+760s shows /etc/logrotate.d/orders-api was modified 2026-04-22 with `rotate=0`, while the peer host orders-api-i-1f9e still rotates daily. The current app.log is 14.2GB and free space is below 100MB. With no space, audit-log writes fail (`java.io.IOException: No space left on device`), and because audit logging is in the order-write transaction path, the whole order is rolled back as a 500.",
+  "confidence": 0.88,
+  "evidence": [
+    "app.log @ +180s: 'logrotate not invoked in last 7 days; /var/log/orders-api/app.log size=14.2GB'",
+    "app.log @ +340s: 'java.io.IOException: No space left on device' from AuditLogger.append(AuditLogger.java:54)",
+    "app.log @ +560s: top consumer is /var/log/orders-api/app.log=14.2GB",
+    "app.log @ +760s: config audit indicates logrotate.d/orders-api was changed 2026-04-22 setting rotate=0; peer host still rotates daily",
+    "metrics: disk_usage_pct climbs from 82% to 99.9% over the window; disk_free_mb drops from 12.8GB to 88MB",
+    "metrics: error_rate_pct begins to climb only once disk_free_mb drops below ~3GB (~minute 7), which matches the timing of write failures",
+    "metrics: cpu/memory are flat — this is not a load problem, it's a host-state problem"
+  ],
+  "remediation_steps": [
+    "1. SSH to `orders-api-i-0a3c`, `truncate -s 0 /var/log/orders-api/app.log` to immediately free ~14GB without restarting the service (do *not* `rm` the open file).",
+    "2. Verify disk_free_mb climbs back above 5GB and orders-api 5xx rate drops within 2 minutes.",
+    "3. Restore the correct logrotate config (compare against orders-api-i-1f9e: `diff /etc/logrotate.d/orders-api /etc/logrotate.d/orders-api.peer`) and run `logrotate -f /etc/logrotate.d/orders-api`.",
+    "4. Decommission and replace the host if the wrong logrotate config is part of an outdated AMI; confirm the image used by the orders-api ASG.",
+    "5. Long-term: ship logs off-host (Fluent Bit -> S3/Datadog) so a logrotate failure cannot fill the disk, and alert on `disk_usage_pct > 85%` for 10m as a leading indicator (not just `> 95%`)."
+  ],
+  "related_runbooks": [
+    "host_disk_full.md"
+  ],
+  "related_past_incidents": [
+    "INC-2025-0288"
+  ],
+  "severity_assessment": "SEV-2",
+  "estimated_time_to_mitigate_minutes": 5,
+  "impacted_services": [
+    "orders-api"
+  ],
+  "impacted_users_estimate": "~8% of order placements in ap-southeast-1"
+}

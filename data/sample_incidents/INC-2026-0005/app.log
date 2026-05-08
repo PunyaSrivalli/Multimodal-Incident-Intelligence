@@ -1,0 +1,23 @@
+2026-05-08T03:15:16.181Z  INFO   [orders-api]  [req-o001] POST /orders user_id=u-50012 items=3 -> 201 in 76ms
+2026-05-08T03:16:10.118Z  INFO   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=82.4%, inodes_used=44.1%
+2026-05-08T03:17:20.456Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=92.1% (warning threshold=90%)
+2026-05-08T03:18:10.416Z  INFO   [orders-api.logging]  logrotate not invoked in last 7 days; /var/log/orders-api/app.log size=14.2GB
+2026-05-08T03:19:10.273Z  WARN   [orders-api.audit]  [req-o042] audit-log write retry 1/3 (path=/var/log/orders-api/audit.log)
+2026-05-08T03:20:10.200Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=96.8%
+2026-05-08T03:20:50.290Z  ERROR  [orders-api.audit]  [req-o061] java.io.IOException: No space left on device
+		at java.io.FileOutputStream.writeBytes(Native Method)
+		at com.example.orders.AuditLogger.append(AuditLogger.java:54)
+2026-05-08T03:21:10.004Z  ERROR  [orders-api]  [req-o061] POST /orders -> 500 in 412ms (audit log write failed; transaction rolled back)
+2026-05-08T03:22:10.697Z  ERROR  [orders-api.audit]  [req-o074] java.io.IOException: No space left on device
+2026-05-08T03:22:50.147Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=98.3%
+2026-05-08T03:23:40.415Z  ERROR  [orders-api]  [req-o082] POST /orders -> 500 in 388ms (audit log write failed)
+2026-05-08T03:24:30.574Z  INFO   [orders-api.fs-scan]  top consumers under /var: /var/log/orders-api/app.log=14.2GB, /var/log/orders-api/access.log=2.1GB, /var/cache/apt=1.4GB
+2026-05-08T03:25:30.798Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=99.4%
+2026-05-08T03:26:50.339Z  ERROR  [orders-api]  [req-o119] POST /orders -> 500 in 402ms (audit log write failed)
+2026-05-08T03:27:50.088Z  INFO   [orders-api.deploy]  config audit: logrotate.d/orders-api last modified 2026-04-22 (recent change set rotate=0); compare to peer host orders-api-i-1f9e where logrotate runs daily
+2026-05-08T03:29:10.694Z  ERROR  [orders-api.audit]  [req-o141] java.io.IOException: No space left on device
+2026-05-08T03:30:10.008Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=99.7%, free=512MB
+2026-05-08T03:31:10.010Z  ERROR  [orders-api]  [req-o168] POST /orders -> 500 in 410ms (audit log write failed)
+2026-05-08T03:32:30.766Z  ERROR  [orders-api.audit]  [req-o192] java.io.IOException: No space left on device
+2026-05-08T03:33:50.399Z  WARN   [node-exporter]  filesystem / on host orders-api-i-0a3c: used=99.9%, free=88MB (critical)
+2026-05-08T03:34:50.597Z  ERROR  [orders-api]  [req-o218] POST /orders -> 500 in 398ms (audit log write failed)

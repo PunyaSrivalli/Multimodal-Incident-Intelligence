@@ -1,0 +1,36 @@
+{
+  "incident_id": "INC-2026-0004",
+  "ground_truth_version": "1.0",
+  "root_cause_hypothesis": "Build v2026.05.07 (sha=4f70b1) introduced a 'stricter email validation regex' (fix #C-3318). The new pattern is vulnerable to catastrophic backtracking on email addresses with many dots / repeated subdomain segments. The async-profiler sample at +410s confirms 92% of CPU is in `Pattern$Curly.match` from `EmailValidator.isValid(EmailValidator.java:41)`. CPU saturates around minute 9, the 32-thread request pool fills, and the edge proxy returns 504s after its 5s timeout.",
+  "confidence": 0.93,
+  "evidence": [
+    "app.log @ +0s: deploy v2026.05.07 explicitly mentions 'stricter email validation regex (fix #C-3318)'",
+    "app.log @ +145s/+180s/+240s: latencies of 1.8s/3.1s/5.0s on /login requests with long, dotted email addresses (regex backtracking signature)",
+    "app.log @ +410s/+540s: async-profiler attributes 92% of CPU to java.util.regex.Pattern$Curly.match called from EmailValidator.isValid(EmailValidator.java:41)",
+    "metrics: cpu_usage_pct climbs from 42% to 99% within 9 minutes and stays pinned",
+    "metrics: thread_pool_busy_pct hits 100% at minute 9, edge_504_rate_pct rises immediately after",
+    "metrics: latency_p99_ms saturates at the edge proxy's 5000ms timeout — signature of a CPU-bound request, not a downstream dependency"
+  ],
+  "remediation_steps": [
+    "1. Roll back auth-service to v2026.05.06 (sha=f120ab) — last green build, identified in app.log @ +660s.",
+    "2. Confirm cpu_usage_pct returns to <50% within 2 minutes and edge_504_rate_pct drops to <0.5%.",
+    "3. Open a P0 ticket against the auth team to fix the regex (atomic groups / possessive quantifiers, or replace with a parser library like Apache Commons Validator).",
+    "4. Add a regression test with the failing email patterns from app.log (long dotted user, plus-tag, multi-level subdomain) before re-rolling forward.",
+    "5. Enforce a request-level CPU budget in the auth-service so a single pathological request cannot pin a thread for 5s."
+  ],
+  "related_runbooks": [
+    "high_cpu_after_deploy.md"
+  ],
+  "related_past_incidents": [
+    "INC-2025-0212"
+  ],
+  "severity_assessment": "SEV-1",
+  "estimated_time_to_mitigate_minutes": 8,
+  "impacted_services": [
+    "auth-service",
+    "edge-proxy",
+    "checkout-web",
+    "mobile-app"
+  ],
+  "impacted_users_estimate": "~6% of net-new logins fail; existing sessions unaffected"
+}

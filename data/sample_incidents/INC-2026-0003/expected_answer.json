@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-2026-0003",
+  "ground_truth_version": "1.0",
+  "root_cause_hypothesis": "The marketing platform triggered the 'spring_promo_v3' campaign at +240s (~120k recipients), which alone exceeds the 200 requests-per-minute quota of our `sendmail-pro` standard tier. Layered on top of normal transactional traffic, this drives sustained 429 rate-limited responses; our retry policy queues messages and re-attempts, growing the email-outbound queue depth to ~8k with p95 age over 12 minutes. The system is behaving correctly — there is no bug — but customer impact is real (delayed transactional email).",
+  "confidence": 0.83,
+  "evidence": [
+    "app.log @ +240s: 'marketing campaign spring_promo_v3 triggered (~120k recipients)' precedes the first 429 by ~50s",
+    "app.log @ +290s and onward: sustained 429 responses from sendmail-pro with X-RateLimit-Remaining=0",
+    "app.log @ +600s: current upstream config is tier=standard limit=200rpm — well below 120k recipients spread over a few minutes",
+    "metrics: upstream_429_rate_pct climbs from 0% to ~85% and stays there (cap, not a bug)",
+    "metrics: queue_depth grows monotonically from 60 to 8302; queue_age_p95_seconds reaches 25m+",
+    "no 5xx from sendmail-pro and no errors on the SMS path — the issue is scoped to the email upstream's quota"
+  ],
+  "remediation_steps": [
+    "1. Throttle the marketing campaign: have the marketing team pause 'spring_promo_v3' or move it to the dedicated 'bulk' upstream tier.",
+    "2. Temporarily raise the `sendmail-pro` quota to the burst tier (1000rpm) via the provider portal; this is reversible within the SLA.",
+    "3. Verify queue_depth starts shrinking and queue_age_p95_seconds turns over within 5 minutes.",
+    "4. Communicate to support that order-confirmation emails are delayed but not lost — they are retrying.",
+    "5. Long-term: route bulk/marketing email through a separate upstream client and credentials so transactional traffic is not co-located with bulk."
+  ],
+  "related_runbooks": [
+    "upstream_rate_limiting.md"
+  ],
+  "related_past_incidents": [
+    "INC-2025-0301"
+  ],
+  "severity_assessment": "SEV-3",
+  "estimated_time_to_mitigate_minutes": 12,
+  "impacted_services": [
+    "notifications-service",
+    "marketing-platform"
+  ],
+  "impacted_users_estimate": "~120k recipients see 5-15 min delay; no data loss"
+}

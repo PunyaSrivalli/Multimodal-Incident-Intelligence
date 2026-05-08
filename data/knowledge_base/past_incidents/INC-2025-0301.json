@@ -1,0 +1,24 @@
+{
+  "incident_id": "INC-2025-0301",
+  "title": "notifications-service queue backlog during Black Friday email blast",
+  "service": "notifications-service",
+  "occurred_on": "2025-11-29",
+  "severity": "SEV-3",
+  "duration_minutes": 73,
+  "tags": [
+    "upstream",
+    "rate-limit",
+    "429",
+    "queue"
+  ],
+  "summary": "Black-Friday marketing email caused sustained 429s from sendmail-pro for ~70 minutes. The email queue grew to ~22k and p95 message age peaked at 41 minutes. Transactional and marketing email shared the same upstream credentials.",
+  "resolution": "Marketing pause + temporary provider quota uplift drained the queue. Permanent fix: split bulk traffic onto a separate sendmail-pro account with its own credentials and quota.",
+  "follow_ups": [
+    "Separate bulk vs. transactional upstream credentials (DONE)",
+    "Alert on upstream_429_rate_pct > 5% (DONE)",
+    "Document campaign launch checklist with capacity check (DONE)"
+  ],
+  "related_runbooks": [
+    "upstream_rate_limiting.md"
+  ]
+}

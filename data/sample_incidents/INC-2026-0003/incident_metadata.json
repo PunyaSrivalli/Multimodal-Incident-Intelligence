@@ -1,0 +1,63 @@
+{
+  "incident_id": "INC-2026-0003",
+  "title": "notifications-service queue backlog from upstream 429s",
+  "severity": "SEV-3",
+  "status": "active",
+  "service": "notifications-service",
+  "environment": "production",
+  "region": "eu-west-1",
+  "started_at": "2026-05-06T11:47:02Z",
+  "detected_at": "2026-05-06T11:52:02Z",
+  "window": {
+    "start": "2026-05-06T11:47:02Z",
+    "end": "2026-05-06T12:07:02Z",
+    "duration_minutes": 20
+  },
+  "tags": [
+    "upstream",
+    "rate-limit",
+    "429",
+    "queue",
+    "email"
+  ],
+  "reporter": "prometheus-alert",
+  "on_call": "carla.silva@example.com",
+  "customer_impact": "Outbound transactional emails delayed by 5-15 minutes (order confirmations, password resets). No data loss; messages remain queued and will deliver. SMS path unaffected.",
+  "channels": {
+    "slack": "#inc-2026-0003",
+    "war_room": null,
+    "status_page": "https://status.example.com/incidents/2026-0003"
+  },
+  "alerts": [
+    {
+      "alert_id": "alert-ns-001",
+      "name": "Notifications_Upstream429Rate",
+      "severity": "warning",
+      "fired_at": "2026-05-06T11:52:02Z",
+      "dimensions": {
+        "service": "notifications-service",
+        "upstream": "sendmail-pro"
+      }
+    },
+    {
+      "alert_id": "alert-ns-002",
+      "name": "Notifications_QueueDepthHigh",
+      "severity": "warning",
+      "fired_at": "2026-05-06T11:56:02Z",
+      "dimensions": {
+        "service": "notifications-service",
+        "queue": "email-outbound"
+      }
+    },
+    {
+      "alert_id": "alert-ns-003",
+      "name": "Notifications_QueueAgeP95High",
+      "severity": "warning",
+      "fired_at": "2026-05-06T11:59:02Z",
+      "dimensions": {
+        "service": "notifications-service",
+        "queue": "email-outbound"
+      }
+    }
+  ]
+}

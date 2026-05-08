@@ -1,0 +1,26 @@
+2026-05-05T09:02:52.009Z  INFO   [checkout-service]  [req-aa01] GET /cart user_id=u-77810 -> 200 in 42ms
+2026-05-05T09:03:14.120Z  INFO   [checkout-service.deploy]  rollout checkout-service v2026.05.04 (image sha=8a1c2d) reached 100% on canary
+2026-05-05T09:04:14.284Z  DEBUG  [checkout-service.cache]  in-memory CartCache size=12483 entries
+2026-05-05T09:05:44.883Z  INFO   [checkout-service.jvm]  G1 GC young pause 48ms, heap 1.6GB/2.0GB
+2026-05-05T09:06:44.610Z  WARN   [checkout-service.jvm]  G1 GC mixed pause 312ms, heap 1.84GB/2.0GB (after=1.78GB)
+2026-05-05T09:07:04.191Z  DEBUG  [checkout-service.cache]  in-memory CartCache size=58742 entries
+2026-05-05T09:07:49.952Z  WARN   [checkout-service.jvm]  G1 GC mixed pause 612ms, heap 1.93GB/2.0GB (after=1.89GB) - reclaim ratio low
+2026-05-05T09:08:14.390Z  WARN   [checkout-service]  [req-bb22] GET /cart -> 200 in 1820ms (slow, gc-pause-correlated)
+2026-05-05T09:08:39.010Z  ERROR  [checkout-service.jvm]  java.lang.OutOfMemoryError: Java heap space
+		at com.example.checkout.cache.CartCache.put(CartCache.java:71)
+		at com.example.checkout.handler.CartHandler.getCart(CartHandler.java:142)
+2026-05-05T09:08:44.533Z  ERROR  [kubelet]  container checkout-service-7c9d-xn4 OOMKilled (memory cgroup limit=2Gi, usage=2.0Gi)
+2026-05-05T09:08:46.643Z  INFO   [kubelet]  restarting container checkout-service-7c9d-xn4 (restartCount=1)
+2026-05-05T09:09:04.420Z  WARN   [checkout-service]  [req-cc33] GET /cart -> 502 in 12ms (upstream connection refused: pod terminating)
+2026-05-05T09:09:34.884Z  INFO   [checkout-service]  service starting on port 8080 (build=v2026.05.04, sha=8a1c2d)
+2026-05-05T09:10:34.218Z  DEBUG  [checkout-service.cache]  in-memory CartCache size=24110 entries
+2026-05-05T09:11:44.782Z  WARN   [checkout-service.jvm]  G1 GC mixed pause 410ms, heap 1.79GB/2.0GB
+2026-05-05T09:12:56.176Z  DEBUG  [checkout-service.cache]  in-memory CartCache size=61204 entries
+2026-05-05T09:14:14.944Z  ERROR  [checkout-service.jvm]  java.lang.OutOfMemoryError: Java heap space
+2026-05-05T09:14:19.857Z  ERROR  [kubelet]  container checkout-service-7c9d-xn4 OOMKilled (memory cgroup limit=2Gi, usage=2.0Gi)
+2026-05-05T09:14:24.180Z  INFO   [kubelet]  restarting container checkout-service-7c9d-xn4 (restartCount=2)
+2026-05-05T09:16:24.392Z  WARN   [checkout-service.cache]  CartCache eviction policy=NONE; consider bounding via maxSize or weakKeys (ref: PR #4421 reverted)
+2026-05-05T09:18:04.153Z  DEBUG  [checkout-service.cache]  in-memory CartCache size=43890 entries
+2026-05-05T09:19:44.587Z  WARN   [checkout-service.jvm]  G1 GC mixed pause 740ms, heap 1.91GB/2.0GB (after=1.88GB)
+2026-05-05T09:21:04.677Z  ERROR  [checkout-service.jvm]  java.lang.OutOfMemoryError: Java heap space
+2026-05-05T09:21:12.852Z  ERROR  [kubelet]  container checkout-service-7c9d-xn4 OOMKilled (restartCount=3, backoff=20s)

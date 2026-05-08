@@ -1,0 +1,23 @@
+{
+  "incident_id": "INC-2025-0212",
+  "title": "search-api CPU saturation from regex change in query parser",
+  "service": "search-api",
+  "occurred_on": "2025-09-21",
+  "severity": "SEV-1",
+  "duration_minutes": 22,
+  "tags": [
+    "cpu",
+    "regex",
+    "deploy"
+  ],
+  "summary": "search-api deploy introduced a regex change in the query parser. Long queries with repeating tokens triggered catastrophic backtracking, CPU pinned at 99%, edge 504 rate rose to ~9%. Profiler attributed >90% of CPU to Pattern$Curly.match in QueryNormalizer.",
+  "resolution": "Rolled back to previous build, fixed regex with possessive quantifiers, added regression tests for the failing inputs.",
+  "follow_ups": [
+    "CPU-budget unit test for QueryNormalizer (DONE)",
+    "Per-request CPU budget enforcement (DONE)",
+    "Canary analysis includes cpu_usage_pct (DONE)"
+  ],
+  "related_runbooks": [
+    "high_cpu_after_deploy.md"
+  ]
+}

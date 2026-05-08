@@ -1,0 +1,62 @@
+{
+  "incident_id": "INC-2026-0005",
+  "title": "orders-api write errors and 5xx — host disk full",
+  "severity": "SEV-2",
+  "status": "active",
+  "service": "orders-api",
+  "environment": "production",
+  "region": "ap-southeast-1",
+  "started_at": "2026-05-08T03:15:10Z",
+  "detected_at": "2026-05-08T03:19:10Z",
+  "window": {
+    "start": "2026-05-08T03:15:10Z",
+    "end": "2026-05-08T03:35:10Z",
+    "duration_minutes": 20
+  },
+  "tags": [
+    "disk",
+    "filesystem",
+    "logs",
+    "5xx",
+    "infra"
+  ],
+  "reporter": "node-exporter",
+  "on_call": "elena.popescu@example.com",
+  "customer_impact": "Order placement intermittently failing for SEA region (~8% of POST /orders requests). Reads still serve from the read replica. No data loss confirmed; failed orders return a clear error and are not silently dropped.",
+  "channels": {
+    "slack": "#inc-2026-0005",
+    "war_room": "https://meet.example.com/inc-2026-0005",
+    "status_page": "https://status.example.com/incidents/2026-0005"
+  },
+  "alerts": [
+    {
+      "alert_id": "alert-or-001",
+      "name": "Node_DiskUsageHigh",
+      "severity": "warning",
+      "fired_at": "2026-05-08T03:17:10Z",
+      "dimensions": {
+        "host": "orders-api-i-0a3c",
+        "mount": "/"
+      }
+    },
+    {
+      "alert_id": "alert-or-002",
+      "name": "OrdersAPI_5xxRate",
+      "severity": "critical",
+      "fired_at": "2026-05-08T03:21:10Z",
+      "dimensions": {
+        "service": "orders-api"
+      }
+    },
+    {
+      "alert_id": "alert-or-003",
+      "name": "Node_DiskUsageCritical",
+      "severity": "critical",
+      "fired_at": "2026-05-08T03:24:10Z",
+      "dimensions": {
+        "host": "orders-api-i-0a3c",
+        "mount": "/"
+      }
+    }
+  ]
+}

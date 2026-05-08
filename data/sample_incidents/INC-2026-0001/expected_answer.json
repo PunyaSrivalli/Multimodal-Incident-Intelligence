@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-2026-0001",
+  "ground_truth_version": "1.0",
+  "root_cause_hypothesis": "A long-running maintenance query against the `charges` table (pid=18821, started ~14:30 UTC) is holding a HikariCP connection and blocking concurrent inserts. As background reconciliation workers also borrow connections, the 100-connection pool saturates around 14:31:11 UTC. Subsequent /charge requests wait 30s on `getConnection`, time out, and surface as 503s; the `charges-write` circuit breaker eventually opens, fast-failing the rest.",
+  "confidence": 0.86,
+  "evidence": [
+    "app.log @ +410s: 'long-running query observed: SELECT ... FROM charges WHERE status=pending (running for 412s, pid=18821)'",
+    "app.log @ +482s: 'HikariPool-1 - Connection is not available, request timed out after 30000ms (active=100, idle=0, waiting=18)'",
+    "metrics: db_pool_active hits 100/100 at minute 11 and stays saturated through end of window",
+    "metrics: db_pool_wait_ms_p95 jumps from 18ms to 30000ms between minute 6 and minute 12",
+    "metrics: error_rate_pct goes from 0.3% to 35% over the same window while request_rate_rps trends down (clients giving up / circuit open)",
+    "app.log @ +1080s: 'circuit breaker charges-write transitioned CLOSED -> OPEN after 50 consecutive failures in 60s'"
+  ],
+  "remediation_steps": [
+    "1. In a read replica, confirm the long-running query: SELECT pid, now()-query_start AS runtime, query FROM pg_stat_activity WHERE state='active' ORDER BY runtime DESC.",
+    "2. Coordinate with the data team and `pg_cancel_backend(18821)` (or `pg_terminate_backend` if cancel is ignored).",
+    "3. Watch `db_pool_active` recover toward baseline (~40). Pool should drain within 60s once the blocking query is killed.",
+    "4. Manually close the `charges-write` circuit breaker via the admin endpoint once error rate drops below 1%.",
+    "5. File a follow-up to add a `statement_timeout` on the maintenance role and to gate the `reconcile_pending_charges` job behind a connection-budget check."
+  ],
+  "related_runbooks": [
+    "db_connection_pool_exhaustion.md"
+  ],
+  "related_past_incidents": [
+    "INC-2025-0119"
+  ],
+  "severity_assessment": "SEV-2",
+  "estimated_time_to_mitigate_minutes": 15,
+  "impacted_services": [
+    "payments-api",
+    "checkout-web",
+    "orders-api"
+  ],
+  "impacted_users_estimate": "1k-5k checkout attempts affected"
+}

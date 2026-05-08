@@ -1,0 +1,61 @@
+{
+  "incident_id": "INC-2026-0002",
+  "title": "checkout-service pods OOMKilled, intermittent 502s on /cart",
+  "severity": "SEV-2",
+  "status": "active",
+  "service": "checkout-service",
+  "environment": "production",
+  "region": "us-west-2",
+  "started_at": "2026-05-05T09:02:44Z",
+  "detected_at": "2026-05-05T09:08:44Z",
+  "window": {
+    "start": "2026-05-05T09:02:44Z",
+    "end": "2026-05-05T09:22:44Z",
+    "duration_minutes": 20
+  },
+  "tags": [
+    "memory",
+    "oom",
+    "kubernetes",
+    "5xx",
+    "deploy"
+  ],
+  "reporter": "datadog-monitor",
+  "on_call": "ben.okafor@example.com",
+  "customer_impact": "Intermittent 502s on /cart and /checkout during pod restarts. Each restart drops ~30s of in-flight requests; sticky sessions mitigate impact but ~3% of users see a blank cart.",
+  "channels": {
+    "slack": "#inc-2026-0002",
+    "war_room": "https://meet.example.com/inc-2026-0002",
+    "status_page": "https://status.example.com/incidents/2026-0002"
+  },
+  "alerts": [
+    {
+      "alert_id": "alert-co-001",
+      "name": "Checkout_PodOOMKilled",
+      "severity": "critical",
+      "fired_at": "2026-05-05T09:08:44Z",
+      "dimensions": {
+        "service": "checkout-service",
+        "namespace": "checkout"
+      }
+    },
+    {
+      "alert_id": "alert-co-002",
+      "name": "Checkout_HighGCPause",
+      "severity": "warning",
+      "fired_at": "2026-05-05T09:06:44Z",
+      "dimensions": {
+        "service": "checkout-service"
+      }
+    },
+    {
+      "alert_id": "alert-co-003",
+      "name": "Checkout_5xxSpike",
+      "severity": "warning",
+      "fired_at": "2026-05-05T09:09:44Z",
+      "dimensions": {
+        "service": "checkout-service"
+      }
+    }
+  ]
+}

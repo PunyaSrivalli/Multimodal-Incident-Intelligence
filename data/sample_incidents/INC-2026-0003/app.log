@@ -1,0 +1,21 @@
+2026-05-06T11:47:06.821Z  INFO   [notifications-service]  [msg-aa01] dispatch email template=order_confirmation user=u-91002 -> sendmail-pro
+2026-05-06T11:47:14.321Z  INFO   [notifications-service.upstream]  [msg-aa01] POST sendmail-pro/v1/messages -> 202 in 142ms
+2026-05-06T11:48:02.261Z  INFO   [notifications-service.queue]  queue email-outbound depth=48 age_p95=1.2s
+2026-05-06T11:51:02.119Z  INFO   [marketing-platform.webhook]  marketing campaign 'spring_promo_v3' triggered (~120k recipients)
+2026-05-06T11:51:52.488Z  WARN   [notifications-service.upstream]  [msg-bb12] POST sendmail-pro/v1/messages -> 429 in 88ms (X-RateLimit-Remaining=0, retry-after=30)
+2026-05-06T11:52:07.352Z  WARN   [notifications-service.upstream]  [msg-bb13] POST sendmail-pro/v1/messages -> 429 in 92ms (X-RateLimit-Remaining=0)
+2026-05-06T11:52:32.717Z  INFO   [notifications-service.retry]  [msg-bb12] scheduled retry attempt=1 of 5 in 30s (msg-bb12)
+2026-05-06T11:54:02.972Z  WARN   [notifications-service.upstream]  [msg-cc44] POST sendmail-pro/v1/messages -> 429 in 84ms (X-RateLimit-Remaining=0)
+2026-05-06T11:55:02.398Z  INFO   [notifications-service.queue]  queue email-outbound depth=812 age_p95=18s
+2026-05-06T11:56:02.748Z  WARN   [notifications-service.queue]  queue email-outbound depth=2104 age_p95=42s (alert: QueueDepthHigh)
+2026-05-06T11:57:02.028Z  INFO   [notifications-service.config]  current upstream config: sendmail-pro tier=standard limit=200rpm burst=400
+2026-05-06T11:58:02.754Z  WARN   [notifications-service.upstream]  [msg-dd55] POST sendmail-pro/v1/messages -> 429 in 90ms
+2026-05-06T11:59:02.443Z  WARN   [notifications-service.queue]  queue email-outbound depth=4488 age_p95=4m12s (alert: QueueAgeP95High)
+2026-05-06T12:00:02.862Z  INFO   [notifications-service.retry]  [msg-bb12] retry attempt=3 of 5 (msg-bb12, queued 7m30s ago)
+2026-05-06T12:01:02.906Z  WARN   [notifications-service.upstream]  [msg-ee66] POST sendmail-pro/v1/messages -> 429 in 88ms
+2026-05-06T12:02:02.406Z  INFO   [notifications-service.queue]  queue email-outbound depth=6208 age_p95=7m45s
+2026-05-06T12:03:02.413Z  INFO   [notifications-service.upstream]  [msg-ff77] POST sendmail-pro/v1/messages -> 202 in 138ms
+2026-05-06T12:04:02.403Z  WARN   [notifications-service.upstream]  [msg-gg88] POST sendmail-pro/v1/messages -> 429 in 92ms
+2026-05-06T12:05:02.691Z  INFO   [notifications-service.queue]  queue email-outbound depth=7102 age_p95=10m12s
+2026-05-06T12:06:02.019Z  WARN   [notifications-service.upstream]  [msg-hh99] POST sendmail-pro/v1/messages -> 429 in 86ms
+2026-05-06T12:06:42.711Z  INFO   [notifications-service.queue]  queue email-outbound depth=7884 age_p95=12m40s

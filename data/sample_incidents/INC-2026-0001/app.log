@@ -1,0 +1,25 @@
+2026-05-04T14:23:16.859Z  INFO   [payments-api]  [req-7af2c1] POST /charge user_id=u-10231 amount=49.95 currency=USD
+2026-05-04T14:23:23.250Z  DEBUG  [payments-api.db]  [req-7af2c1] HikariPool-1 acquired connection (used=42/100, idle=58)
+2026-05-04T14:23:29.891Z  INFO   [payments-api]  [req-7af2c1] POST /charge -> 200 in 87ms
+2026-05-04T14:24:11.534Z  INFO   [payments-api]  [req-1c83de] POST /charge user_id=u-10288 amount=12.00 currency=USD
+2026-05-04T14:24:41.495Z  INFO   [payments-api.db]  background job 'reconcile_pending_charges' started (last_run=12h ago)
+2026-05-04T14:27:11.900Z  WARN   [payments-api.db]  [req-9b1e44] HikariPool-1 connection acquire took 1812ms (threshold=500ms, used=88/100)
+2026-05-04T14:28:16.573Z  WARN   [payments-api.db]  [req-44f0aa] HikariPool-1 connection acquire took 2940ms (threshold=500ms, used=94/100)
+2026-05-04T14:29:11.456Z  WARN   [payments-api]  [req-44f0aa] POST /charge -> 200 in 3105ms (slow)
+2026-05-04T14:30:01.585Z  INFO   [payments-api.db]  long-running query observed: SELECT ... FROM charges WHERE status='pending' (running for 412s, pid=18821)
+2026-05-04T14:31:01.265Z  WARN   [payments-api.db]  [req-2e9c01] HikariPool-1 connection acquire took 7805ms (used=100/100, pending=14)
+2026-05-04T14:31:13.887Z  ERROR  [payments-api.db]  [req-2e9c01] HikariPool-1 - Connection is not available, request timed out after 30000ms (active=100, idle=0, waiting=18)
+2026-05-04T14:31:13.324Z  ERROR  [payments-api]  [req-2e9c01] POST /charge -> 503 in 30041ms (db connection timeout)
+2026-05-04T14:31:42.931Z  ERROR  [payments-api.db]  [req-810b22] HikariPool-1 - Connection is not available, request timed out after 30000ms
+2026-05-04T14:32:11.331Z  ERROR  [payments-api]  [req-810b22] POST /charge -> 503 in 30012ms (db connection timeout)
+2026-05-04T14:33:23.538Z  ERROR  [payments-api.db]  java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms
+		at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:686)
+		at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:179)
+		at com.example.payments.ChargeRepository.insert(ChargeRepository.java:88)
+2026-05-04T14:34:51.482Z  WARN   [payments-api.metrics]  metric db_pool_active=100 db_pool_idle=0 db_pool_waiting=22 over 60s window
+2026-05-04T14:35:51.477Z  INFO   [payments-api.db]  long-running query still active: pid=18821, runtime=762s, query=SELECT ... FROM charges WHERE status='pending' ORDER BY created_at
+2026-05-04T14:36:51.125Z  ERROR  [payments-api]  [req-554d10] POST /charge -> 503 in 30008ms (db connection timeout)
+2026-05-04T14:38:16.118Z  WARN   [payments-api.kafka]  publish to topic 'charge.completed' lagging by 612 messages (consumer is healthy)
+2026-05-04T14:39:31.918Z  ERROR  [payments-api]  [req-2210ff] POST /charge -> 503 in 30019ms (db connection timeout)
+2026-05-04T14:41:11.164Z  ERROR  [payments-api.db]  circuit breaker 'charges-write' transitioned CLOSED -> OPEN after 50 consecutive failures in 60s
+2026-05-04T14:42:21.593Z  WARN   [payments-api]  [req-cc8801] POST /charge -> 503 in 12ms (circuit-open: charges-write)

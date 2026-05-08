@@ -1,0 +1,23 @@
+{
+  "incident_id": "INC-2025-0072",
+  "title": "checkout-service OOM after recommendation cache change",
+  "service": "checkout-service",
+  "occurred_on": "2025-08-09",
+  "severity": "SEV-2",
+  "duration_minutes": 41,
+  "tags": [
+    "memory",
+    "oom",
+    "deploy",
+    "cache"
+  ],
+  "summary": "A change to RecommendationCache replaced the bounded Caffeine cache with a plain ConcurrentHashMap. Heap grew steadily over ~30 minutes until pods hit the 2Gi cgroup limit and the kubelet started OOMKilling them. Symptoms identical to INC-2026-0002: sawtooth heap, monotonically rising pod_restarts_total, GC pauses preceding each crash.",
+  "resolution": "Rolled back the deploy and re-introduced the bounded Caffeine cache with maxSize=50_000. Added a heap-usage SLO alert.",
+  "follow_ups": [
+    "Lint rule: forbid unbounded ConcurrentHashMap as a cache (DONE)",
+    "Heap dump on OOM enabled cluster-wide (DONE)"
+  ],
+  "related_runbooks": [
+    "jvm_oom_and_memory_leak.md"
+  ]
+}

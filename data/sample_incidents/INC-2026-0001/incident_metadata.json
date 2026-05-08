@@ -1,0 +1,63 @@
+{
+  "incident_id": "INC-2026-0001",
+  "title": "Elevated 5xx errors and p99 latency on payments-api",
+  "severity": "SEV-2",
+  "status": "active",
+  "service": "payments-api",
+  "environment": "production",
+  "region": "us-east-1",
+  "started_at": "2026-05-04T14:23:11Z",
+  "detected_at": "2026-05-04T14:25:59Z",
+  "window": {
+    "start": "2026-05-04T14:23:11Z",
+    "end": "2026-05-04T14:43:11Z",
+    "duration_minutes": 20
+  },
+  "tags": [
+    "database",
+    "hikari",
+    "latency",
+    "5xx",
+    "checkout"
+  ],
+  "reporter": "pagerduty",
+  "on_call": "alice.nguyen@example.com",
+  "customer_impact": "~12% of POST /charge requests returning 503; checkout client retries are succeeding for most users, but ~40 customers have reported failed payments via support.",
+  "channels": {
+    "slack": "#inc-2026-0001",
+    "war_room": "https://meet.example.com/inc-2026-0001",
+    "status_page": "https://status.example.com/incidents/2026-0001"
+  },
+  "alerts": [
+    {
+      "alert_id": "alert-pa-001",
+      "name": "PaymentsAPI_HighErrorRate",
+      "severity": "warning",
+      "fired_at": "2026-05-04T14:25:59Z",
+      "dimensions": {
+        "service": "payments-api",
+        "env": "production"
+      }
+    },
+    {
+      "alert_id": "alert-pa-002",
+      "name": "PaymentsAPI_HighLatencyP99",
+      "severity": "warning",
+      "fired_at": "2026-05-04T14:27:11Z",
+      "dimensions": {
+        "service": "payments-api",
+        "env": "production"
+      }
+    },
+    {
+      "alert_id": "alert-pa-003",
+      "name": "PaymentsAPI_DBPoolSaturated",
+      "severity": "critical",
+      "fired_at": "2026-05-04T14:31:11Z",
+      "dimensions": {
+        "service": "payments-api",
+        "pool": "HikariPool-1"
+      }
+    }
+  ]
+}

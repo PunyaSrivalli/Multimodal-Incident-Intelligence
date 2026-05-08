@@ -1,0 +1,9 @@
+# Phase 0 (synthetic data generation) intentionally uses only the Python
+# standard library so the dataset can be regenerated anywhere with `python3`.
+#
+# Future phases will add (uncomment when introduced):
+#   groq>=0.11.0          # LLM inference client
+#   pydantic>=2.7.0       # Schema validation for incident inputs/outputs
+#   tenacity>=8.2.0       # Retry/backoff for Groq calls
+#   rich>=13.7.0          # Pretty CLI output for the assistant
+#   pytest>=8.0.0         # Test suite

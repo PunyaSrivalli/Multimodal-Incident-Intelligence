@@ -1,0 +1,35 @@
+{
+  "incident_id": "INC-2026-0002",
+  "ground_truth_version": "1.0",
+  "root_cause_hypothesis": "Build v2026.05.04 (sha=8a1c2d) shipped a regression in `CartCache` where the eviction policy was removed (see log @+820s: 'eviction policy=NONE; consider bounding ... ref: PR #4421 reverted'). Cache entries grow unbounded with traffic, the JVM heap fills, GC pauses lengthen, and the pod is OOMKilled by the kubelet at the 2Gi cgroup limit. Each restart starts the leak from scratch, producing the sawtooth pattern in `heap_used_bytes_mb` and `pod_restarts_total`.",
+  "confidence": 0.91,
+  "evidence": [
+    "app.log @ +30s: rollout checkout-service v2026.05.04 (sha=8a1c2d) reached 100%",
+    "app.log @ +260s/+612s/+920s: CartCache size keeps climbing across restarts (12k -> 58k -> 61k -> 43k)",
+    "app.log @ +355s: java.lang.OutOfMemoryError originating in CartCache.put",
+    "app.log @ +360s/+695s/+1108s: kubelet OOMKilled events at restartCount 1, 2, 3",
+    "metrics: heap_used_bytes_mb shows clear sawtooth (1990 -> drop -> climb) every ~5 minutes",
+    "metrics: pod_restarts_total grows monotonically from 0 to 4 over the window",
+    "app.log @ +820s explicitly references the responsible PR (#4421) being reverted from a guard"
+  ],
+  "remediation_steps": [
+    "1. Roll back checkout-service to the previous green build (v2026.05.03) via the deploy tool: `deploy rollback checkout-service --to v2026.05.03`.",
+    "2. Watch `pod_restarts_total` stop incrementing and `heap_used_bytes_mb` stabilize below 1.6GB.",
+    "3. As a safety net while rollback propagates, raise the memory limit to 3Gi to give pods headroom (`kubectl set resources deploy/checkout-service --limits=memory=3Gi`).",
+    "4. Open a P1 ticket against the checkout team to re-introduce the bounded cache (Caffeine maxSize or WeakHashMap) before re-rolling forward.",
+    "5. Add a heap dump on OOM (`-XX:+HeapDumpOnOutOfMemoryError`) so future occurrences are diagnosable from artefacts, not logs."
+  ],
+  "related_runbooks": [
+    "jvm_oom_and_memory_leak.md"
+  ],
+  "related_past_incidents": [
+    "INC-2025-0072"
+  ],
+  "severity_assessment": "SEV-2",
+  "estimated_time_to_mitigate_minutes": 10,
+  "impacted_services": [
+    "checkout-service",
+    "checkout-web"
+  ],
+  "impacted_users_estimate": "~3% of active sessions during pod restarts"
+}

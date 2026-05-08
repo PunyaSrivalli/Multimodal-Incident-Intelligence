@@ -1,0 +1,24 @@
+{
+  "incident_id": "INC-2025-0119",
+  "title": "payments-api 503s caused by stuck reconciliation query",
+  "service": "payments-api",
+  "occurred_on": "2025-11-18",
+  "severity": "SEV-2",
+  "duration_minutes": 28,
+  "tags": [
+    "database",
+    "hikari",
+    "5xx",
+    "reconciliation"
+  ],
+  "summary": "A nightly reconciliation job ran during peak traffic after a scheduler change, took ~22 minutes, and held a connection blocking concurrent /charge inserts. HikariPool-1 saturated at 100/100 and /charge began returning 503s for ~12 minutes.",
+  "resolution": "Killed the reconciliation backend with pg_terminate_backend, manually re-closed the charges-write circuit breaker, and rolled back the scheduler change. Permanent fix: moved reconciliation to the read replica and added a statement_timeout of 5m on the maintenance role.",
+  "follow_ups": [
+    "Add statement_timeout to maintenance DB role (DONE)",
+    "Move reconciliation job to read replica (DONE)",
+    "Alert on db_pool_active/max > 0.8 (DONE)"
+  ],
+  "related_runbooks": [
+    "db_connection_pool_exhaustion.md"
+  ]
+}

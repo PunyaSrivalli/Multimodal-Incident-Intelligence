@@ -1,0 +1,23 @@
+{
+  "incident_id": "INC-2025-0288",
+  "title": "billing-api hosts disk full from un-rotated audit logs",
+  "service": "billing-api",
+  "occurred_on": "2025-10-30",
+  "severity": "SEV-2",
+  "duration_minutes": 34,
+  "tags": [
+    "disk",
+    "logs",
+    "logrotate"
+  ],
+  "summary": "Two billing-api hosts ran out of disk because logrotate was removed from the AMI in a hardening change. Audit log writes failed with 'No space left on device', causing transactional writes to roll back as 500s. Symptoms identical to INC-2026-0005.",
+  "resolution": "Truncated the open log file to free space, restored logrotate via configuration management, and re-baked the AMI with logrotate included by default.",
+  "follow_ups": [
+    "AMI smoke test: logrotate present and ran in last 24h (DONE)",
+    "Ship audit logs to S3 via Fluent Bit (DONE)",
+    "Add disk_usage_pct > 85% leading-indicator alert (DONE)"
+  ],
+  "related_runbooks": [
+    "host_disk_full.md"
+  ]
+}
